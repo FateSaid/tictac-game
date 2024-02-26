@@ -67,7 +67,7 @@ function GameController(){
             clearBoard();
             return;
         }
-        switchPlayer();
+        
         printNewRound();
         
 
@@ -113,7 +113,9 @@ function GameController(){
     return{
         playRound,
         getActivePlayer,
-        calculateWinner
+        calculateWinner,
+        getBoard: board.getBoard,
+        switchPlayer
     }
 
 }
@@ -127,4 +129,36 @@ function cell(){
     }
 }
 
-const game = GameController();
+
+
+function ScreenController(){
+
+    const game = GameController();
+    const boardDiv = document.querySelector('.board');
+
+    const turnDiv = document.querySelector('.turn');
+    
+    turnDiv.textContent = `${game.getActivePlayer().name}'s turn...`;
+
+    const board = game.getBoard();
+
+    
+    
+
+    for(let i = 0; i < board.length;i++){
+        for(let j = 0; j < board[i].length; j++){
+            const btn = document.createElement('button');
+            btn.classList.add('cell');
+            boardDiv.appendChild(btn);
+            btn.addEventListener('click', ()=> {
+                game.playRound(i,j);
+                btn.textContent = game.getActivePlayer().mark;
+                game.switchPlayer();
+            });
+        }
+    }
+    
+
+}
+
+ScreenController();
