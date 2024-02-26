@@ -1,10 +1,8 @@
 function Gameboard(){
     const board = [];
-    const row = 3;
-    const column = 3;
-    for(let i = 0; i < row; i++){
+    for(let i = 0; i < 3; i++){
         board[i] = [];
-        for(let j = 0; j < column; j++){
+        for(let j = 0; j < 3; j++){
             board[i].push(cell());
         }
     }
@@ -12,37 +10,21 @@ function Gameboard(){
     const getBoard = () => board;
 
     const getMark = (row, column, mark) => {
-        if(board[row][column].getValue() !== '')return;
-        board[row][column].addMark(mark)
+        getBoard()[row][column].addMark(mark);
     };
-
 
     const printBoard = () => {
-        const boardWithCellvalues = board.map((row) => row.map((cell) => cell.getValue()))
-        console.log(boardWithCellvalues);
-    };
-
-    
-
-
+        const printing = board.map((row) => row.map((cell) => cell.getValue()));
+        console.log(printing);
+    }
     return {
         getBoard,
-        printBoard,
-        getMark
+        getMark,
+        printBoard
     }
+
+
 }
-
-function cell(){
-    let value = '';
-    const addMark = (mark) => value = mark;
-    const getValue = () => value;
-    return {
-        addMark,
-        getValue
-    }
-}
-
-
 function GameController(){
     const board = Gameboard();
 
@@ -58,35 +40,45 @@ function GameController(){
     ];
 
     let activePlayer = players[0];
-    const switchActivePlayer = () => {
-        activePlayer = (activePlayer === players[0]) ? players[1] : players[0];
+
+    const switchPlayer = () =>{
+        activePlayer = (activePlayer === players[0])? players[1] : players[0];
+        
     }
 
-    const getActivePlayer = () => activePlayer;
+
+    const getActivePlayer = () => activePlayer; 
+
+    let getActiveBoard = () => board.getBoard().map(row => row.map(cell => cell.getValue()));
 
     const printNewRound = () => {
         board.printBoard();
         console.log(`${getActivePlayer().name}'s turn`);
     };
 
-    const activeBoard = () => board.getBoard().map((row) => row.map((cell) => cell.getValue()));
 
-    const playRound = (row, column) => {
-        if (board.getBoard()[row][column].getValue() !== '') return console.log('Invalid');
-        board.getMark(row, column, getActivePlayer().mark);
-        const winner = calculateWinner(activeBoard());
-        if (winner) {
-            console.log(`${winner} is the winner! Game over.`);
-            return; // Stop the game loop
+    function playRound(row, column){
+        if(board.getBoard()[row][column].getValue() !== '')return console.log('Invalid');
+        board.getMark(row,column, getActivePlayer().mark);
+        const winner = calculateWinner(getActiveBoard());
+        if(winner){
+            console.log(`${getActivePlayer().name} is the winner`);
+            console.log(getActiveBoard());
+            clearBoard();
+            return;
         }
-        switchActivePlayer();
+        switchPlayer();
         printNewRound();
+        
+
+
     }
+
     function calculateWinner(array) {
         for (let i = 0; i < array.length; i++) {
             
             if (array[i][0] !== '' && (array[i][0] == array[i][1] && array[i][0] == array[i][2])) {
-                return console.log(`${array[i][0]} is the winner`);
+                return true;
             }
         }
     
@@ -94,77 +86,45 @@ function GameController(){
         for (let i = 0; i < array.length; i++) {
             
             if (array[0][i] !== '' && (array[0][i] == array[1][i] && array[0][i] == array[2][i])) {
-                return console.log(`${array[i][0]} is the winner`);
+                return true;
             }
         }
     
         
         if (array[0][0] !== '' && (array[0][0] == array[1][1] && array[0][0] == array[2][2])) {
-            return console.log(`${array[i][0]} is the winner`);
+            return true;
         }
         if (array[0][2] !== '' && (array[0][2] == array[1][1] && array[0][2] == array[2][0])) {
-            return console.log(`${array[i][0]} is the winner`);
+            return true;
         }
     
         return false;
     }
 
-    
-    
-    
-
-    return {
-        getActivePlayer,
-        playRound,
-        calculateWinner,
-        getBoard : board.getBoard
-    };
-}
-
-function ScreenController(){
-    const game = GameController();
-
-    const boardDiv = document.querySelector('.board');
-    const turnDiv = document.querySelector('.turn');
-
-    const updateScreen = () => {
-        boardDiv.textContent = '';
-
-        const board = game.getBoard();
-        const activePlayer = game.getActivePlayer();
-
-        turnDiv.textContent = `${activePlayer.name}'s turn...`;
-
-        
-        for(let i = 0; i < board.length; i++){
-            for(let j = 0; j < board[i].length; j++){
-                const cellButton = document.createElement('button');
-                cellButton.classList.add('cell');
-                cellButton.textContent = board[i][j].getValue();
-                boardDiv.appendChild(cellButton);
+    function clearBoard(){
+        const currentBoard = getActiveBoard();
+        for(let i = 0; i < currentBoard.length; i++){
+            for(let j = 0; j < currentBoard[i].length; j++){
+                board.getMark(i,j,'');
             }
         }
-
-        
-        
-
-    };
-
-    function clickHandlerBoard(e){
-        const cellIndex = Array.from(boardDiv.children).indexOf(e.target);
-        const row = Math.floor(cellIndex / 3); // Assuming 3x3 board
-        const column = cellIndex % 3;
-        game.playRound(row, column); // Play the round when a cell is clicked
-        updateScreen(); // Update the screen after playing the round
-        
     }
 
-    boardDiv.addEventListener('click', clickHandlerBoard);
-
-    updateScreen();
+    return{
+        playRound,
+        getActivePlayer,
+        calculateWinner
+    }
 
 }
+function cell(){
+    let value = '';
+    const getValue = () => value;
+    const addMark = (mark) => value = mark;
+    return {
+        getValue,
+        addMark
+    }
+}
 
-ScreenController();
-
-
+const game = GameController();
