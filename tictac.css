@@ -31,4 +31,21 @@ h1{
     margin:20px;
 }
 
+.restart{
+    padding:20px;
+    display:flex;
+    justify-content: center;
+}
 
+.restart button{
+    font-size:2rem;
+}
+
+button{
+    border: none;
+    color:black;
+}
+
+button:hover{
+    background-color: white;
+}

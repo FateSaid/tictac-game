@@ -64,7 +64,7 @@ function GameController(){
         if(winner){
             console.log(`${getActivePlayer().name} is the winner`);
             console.log(getActiveBoard());
-            clearBoard();
+            
             return;
         }
         
@@ -115,7 +115,8 @@ function GameController(){
         getActivePlayer,
         calculateWinner,
         getBoard: board.getBoard,
-        switchPlayer
+        switchPlayer,
+        clearBoard
     }
 
 }
@@ -142,21 +143,45 @@ function ScreenController(){
 
     const board = game.getBoard();
 
-    
-    
+    const getActiveBoard = () => board.map(row => row.map(cell => cell.getValue()));
 
-    for(let i = 0; i < board.length;i++){
-        for(let j = 0; j < board[i].length; j++){
-            const btn = document.createElement('button');
-            btn.classList.add('cell');
-            boardDiv.appendChild(btn);
-            btn.addEventListener('click', ()=> {
-                game.playRound(i,j);
-                btn.textContent = game.getActivePlayer().mark;
-                game.switchPlayer();
-            });
+    
+    
+    function updateScreen(){
+        boardDiv.textContent = '';
+
+        for(let i = 0; i < board.length;i++){
+            for(let j = 0; j < board[i].length; j++){
+
+                const btn = document.createElement('button');
+                btn.classList.add('cell');
+                boardDiv.appendChild(btn);
+                btn.addEventListener('click', ()=> {
+
+                    game.playRound(i,j);
+                    
+                    
+                    btn.textContent = game.getActivePlayer().mark;
+                    console.log(getActiveBoard());
+                    if(game.calculateWinner(getActiveBoard())){
+                        turnDiv.textContent = `${game.getActivePlayer().name} is the winner`;
+                        game.clearBoard();
+                        return;
+                    }
+                    
+                    game.switchPlayer();
+                    turnDiv.textContent = `${game.getActivePlayer().name}'s turn...`;
+                });
+            }
         }
     }
+
+    updateScreen();
+
+    const restartBtn = document.querySelector('.restart');
+    restartBtn.addEventListener('click', () => {
+        updateScreen();
+    })
     
 
 }
