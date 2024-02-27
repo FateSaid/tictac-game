@@ -28,6 +28,8 @@ function Gameboard(){
 function GameController(){
     const board = Gameboard();
 
+    
+
     const players = [
         {
             name: 'Player One',
@@ -164,8 +166,11 @@ function ScreenController(){
                     btn.textContent = game.getActivePlayer().mark;
                     console.log(getActiveBoard());
                     if(game.calculateWinner(getActiveBoard())){
+                        const cellBtn = document.querySelectorAll('.cell');
+                        cellBtn.forEach(cell => cell.disabled = true);
                         turnDiv.textContent = `${game.getActivePlayer().name} is the winner`;
                         game.clearBoard();
+                    
                         return;
                     }
                     
@@ -181,7 +186,9 @@ function ScreenController(){
     const restartBtn = document.querySelector('.restart');
     restartBtn.addEventListener('click', () => {
         updateScreen();
-    })
+    });
+
+    
     
 
 }
