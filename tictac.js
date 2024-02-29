@@ -15,7 +15,7 @@ function Gameboard(){
 
     const printBoard = () => {
         const printing = board.map((row) => row.map((cell) => cell.getValue()));
-        console.log(printing);
+        
     }
     return {
         getBoard,
@@ -55,20 +55,14 @@ function GameController(){
 
     const printNewRound = () => {
         board.printBoard();
-        console.log(`${getActivePlayer().name}'s turn`);
+        
     };
 
 
     function playRound(row, column){
         if(board.getBoard()[row][column].getValue() !== '')return console.log('Invalid');
         board.getMark(row,column, getActivePlayer().mark);
-        const winner = calculateWinner(getActiveBoard());
-        if(winner){
-            console.log(`${getActivePlayer().name} is the winner`);
-            console.log(getActiveBoard());
-            
-            return;
-        }
+        
         
         printNewRound();
         
@@ -118,7 +112,8 @@ function GameController(){
         calculateWinner,
         getBoard: board.getBoard,
         switchPlayer,
-        clearBoard
+        clearBoard,
+        getPlayer: () => players
     }
 
 }
@@ -136,12 +131,21 @@ function cell(){
 
 function ScreenController(){
 
+    const restartBtn = document.querySelector('.restart');
+    restartBtn.addEventListener('click', () => {
+        updateScreen();
+    });
+
+
+    
+
     const game = GameController();
     const boardDiv = document.querySelector('.board');
-
+    
     const turnDiv = document.querySelector('.turn');
     
-    turnDiv.textContent = `${game.getActivePlayer().name}'s turn...`;
+    
+    
 
     const board = game.getBoard();
 
@@ -150,6 +154,7 @@ function ScreenController(){
     
     
     function updateScreen(){
+        turnDiv.textContent = `${game.getActivePlayer().name}'s turn...`;
         boardDiv.textContent = '';
 
         for(let i = 0; i < board.length;i++){
@@ -164,7 +169,6 @@ function ScreenController(){
                     
                     
                     btn.textContent = game.getActivePlayer().mark;
-                    console.log(getActiveBoard());
                     if(game.calculateWinner(getActiveBoard())){
                         const cellBtn = document.querySelectorAll('.cell');
                         cellBtn.forEach(cell => cell.disabled = true);
@@ -179,18 +183,37 @@ function ScreenController(){
                 });
             }
         }
+        
     }
 
     updateScreen();
 
-    const restartBtn = document.querySelector('.restart');
-    restartBtn.addEventListener('click', () => {
-        updateScreen();
-    });
-
-    
+   
+    return{
+        game : game
+    }
     
 
 }
 
+function modalBox(){
+    const playerOne = document.getElementById('playone');
+    const playerTwo = document.getElementById('playtwo');
+    const modal = document.querySelector('.modal');
+    const modalBtn = document.getElementById('submit');
+    modalBtn.addEventListener('click', (e)=>{
+        e.preventDefault();
+        const screenController = ScreenController();
+        screenController.game.getPlayer()[0].name = playerOne.value;
+        screenController.game.getPlayer()[1].name = playerTwo.value;
+        document.querySelector('.turn').textContent = `${screenController.game.getPlayer()[0].name}`;
+        modal.close();
+
+    });
+    modal.showModal();
+}
+modalBox();
+
 ScreenController();
+
+

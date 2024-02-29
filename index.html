@@ -15,18 +15,16 @@
         <div class="restart">
             <button>Restart</button>
         </div>
-        <form>
-            <div>
-                <label for="playone">Player One</label>
-                <input type="text" id="playone" name="playone" placeholder="Player One">
-            </div>
-            <div>
-                <label for="playtwo">Player Two</label>
-                <input type="text" id="playtwo" name="playtwo" placeholder="Player Two">
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+        
     </div>
-    
+    <dialog class="modal">
+        <h1>Tic-Tac-Toe</h1>
+        <p>Type in player names</p>
+        <form method="dialog">
+            <div><label for="playone">Player One</label><input type="text" id="playone" name="playone"></div>
+            <div><label for="playtwo">Player Two</label><input type="text" id="playtwo" name="playtwo"></div>
+            <button id="submit">Submit</button>
+        </form>
+    </dialog>
 </body>
 </html>
